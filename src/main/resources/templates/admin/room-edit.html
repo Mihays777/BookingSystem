@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+  <title>Редактировать номер — Администратор</title>
+</head>
+<body>
+<div layout:fragment="content">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 pt-4 pb-2">
+          <h2 class="h4 mb-0">
+            <i class="bi bi-pencil-square me-2 text-primary"></i>Редактирование номера №<span th:text="${room.id}"></span>
+          </h2>
+          <p class="text-muted small mb-0">Измените параметры номера</p>
+        </div>
+        <div class="card-body">
+          <form th:action="@{/admin/rooms/{id}(id=${room.id})}" method="post" enctype="multipart/form-data">
+            <!-- Описание -->
+            <div class="mb-4">
+              <label for="description" class="form-label fw-semibold">Описание</label>
+              <textarea class="form-control" id="description" name="description" rows="4"
+                        th:text="${room.description}" required></textarea>
+            </div>
+
+            <!-- Цена -->
+            <div class="mb-4">
+              <label for="price" class="form-label fw-semibold">Цена за ночь (₽)</label>
+              <input type="number" step="0.01" min="0" class="form-control form-control-lg"
+                     id="price" name="price" th:value="${room.price}" required>
+            </div>
+
+            <!-- Активность -->
+            <div class="mb-4 form-check form-switch">
+              <input class="form-check-input" type="checkbox" role="switch" id="isActive" name="isActive"
+                     th:checked="${room.active}">
+              <label class="form-check-label fw-semibold" for="isActive">
+                Номер активен (доступен для бронирования)
+              </label>
+            </div>
+
+            <!-- Фотография (текущая + замена) -->
+            <div class="mb-4">
+              <label class="form-label fw-semibold">Текущая фотография</label>
+              <div class="mb-3">
+                <img th:src="${room.photoPath}" class="rounded-3" style="max-width: 200px; max-height: 150px;">
+              </div>
+              <label for="photo" class="form-label fw-semibold">Заменить фотографию (необязательно)</label>
+              <input type="file" class="form-control" id="photo" name="photo" accept="image/*">
+              <div class="form-text">Оставьте пустым, чтобы сохранить текущее фото.</div>
+            </div>
+
+            <!-- Кнопки -->
+            <div class="d-flex gap-2 justify-content-end">
+              <a th:href="@{/admin/rooms}" class="btn btn-light px-4">Отмена</a>
+              <button type="submit" class="btn btn-primary px-4">
+                <i class="bi bi-check-lg me-2"></i>Сохранить изменения
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

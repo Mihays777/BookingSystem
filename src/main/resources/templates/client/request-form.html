@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+  <title>Запрос на бронирование — Гостиница TOP</title>
+</head>
+<body>
+<div layout:fragment="content">
+  <div class="row g-4">
+    <!-- Карточка с информацией о номере -->
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm h-100">
+        <img th:src="${room.photoPath}" class="card-img-top" alt="Номер"
+             style="height: 260px; object-fit: cover;">
+        <div class="card-body">
+          <h3 class="card-title fw-bold">
+            <i class="bi bi-info-circle me-2"></i>Номер №<span th:text="${room.id}"></span>
+          </h3>
+          <p class="card-text text-secondary" th:text="${room.description}"></p>
+          <hr class="my-4">
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="text-muted">Стоимость за ночь:</span>
+            <span class="fs-2 fw-bold text-primary" th:text="${room.price} + ' ₽'"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Форма выбора даты -->
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 pt-4 pb-2">
+          <h4 class="mb-0"><i class="bi bi-calendar3 me-2"></i>Выберите дату заезда</h4>
+        </div>
+        <div class="card-body">
+          <form th:action="@{/rooms/{id}/request(id=${room.id})}" method="post">
+            <div class="mb-4">
+              <label for="desiredDate" class="form-label fw-semibold">Дата</label>
+              <input type="date" class="form-control form-control-lg" id="desiredDate" name="desiredDate"
+                     th:value="${desiredDate}"
+                     min="${#temporals.format(#temporals.createToday(), 'yyyy-MM-dd')}"
+                     required>
+              <div class="form-text">
+                <i class="bi bi-info-circle me-1"></i>Выберите удобную дату (цена фиксируется на момент запроса)
+              </div>
+            </div>
+
+            <div class="d-grid gap-3">
+              <button type="submit" class="btn btn-primary btn-lg">
+                <i class="bi bi-send me-2"></i>Отправить запрос администратору
+              </button>
+              <a th:href="@{/rooms}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Вернуться к выбору номера
+              </a>
+            </div>
+          </form>
+        </div>
+        <div class="card-footer bg-white border-0 text-muted small py-3">
+          <i class="bi bi-clock-history me-1"></i>После одобрения вам будет дано 24 часа на оплату.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

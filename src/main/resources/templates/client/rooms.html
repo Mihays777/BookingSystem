@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+  <title>Доступные номера — Гостиница TOP</title>
+</head>
+<body>
+<div layout:fragment="content">
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <h1 class="h2 mb-0">
+      <i class="bi bi-grid-3x3-gap-fill me-2 text-primary"></i>Доступные номера
+    </h1>
+    <span class="badge bg-light text-dark p-2">
+            <span th:text="${rooms.size()}"></span> номеров
+        </span>
+  </div>
+
+  <!-- Если нет номеров -->
+  <div th:if="${rooms.empty}" class="text-center py-5">
+    <i class="bi bi-emoji-frown display-1 text-muted"></i>
+    <h3 class="mt-3">Нет доступных номеров</h3>
+    <p class="text-muted">Пожалуйста, зайдите позже или обратитесь к администратору.</p>
+  </div>
+
+  <!-- Сетка карточек номеров -->
+  <div class="row g-4" th:if="${!rooms.empty}">
+    <div class="col-md-6 col-lg-4" th:each="room : ${rooms}">
+      <div class="card h-100 border-0 shadow-sm">
+        <div class="position-relative">
+          <img th:src="${room.photoPath}" class="card-img-top" alt="Фото номера"
+               style="height: 220px; object-fit: cover;">
+          <!-- Бейдж активности (хотя показываем только активные, но оставим) -->
+          <span class="badge bg-success position-absolute top-0 end-0 m-3">Активен</span>
+        </div>
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title fw-bold">
+            <i class="bi bi-door-open me-1"></i>Номер №<span th:text="${room.id}"></span>
+          </h5>
+          <p class="card-text text-secondary flex-grow-1" th:text="${room.description}"></p>
+          <div class="mt-3 d-flex align-items-baseline justify-content-between">
+            <span class="fs-3 fw-bold text-primary" th:text="${room.price} + ' ₽'"></span>
+            <span class="text-muted">/ ночь</span>
+          </div>
+        </div>
+        <div class="card-footer bg-white border-0 pt-0 pb-3">
+          <a th:href="@{/rooms/{id}/request(id=${room.id})}"
+             class="btn btn-primary w-100 rounded-pill py-2">
+            <i class="bi bi-calendar-plus me-2"></i>Забронировать
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+  <title>Добавить номер — Администратор</title>
+</head>
+<body>
+<div layout:fragment="content">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 pt-4 pb-2">
+          <h2 class="h4 mb-0">
+            <i class="bi bi-plus-circle me-2 text-primary"></i>Новый номер
+          </h2>
+          <p class="text-muted small mb-0">Заполните информацию о номере</p>
+        </div>
+        <div class="card-body">
+          <form th:action="@{/admin/rooms}" method="post" enctype="multipart/form-data">
+            <!-- Описание -->
+            <div class="mb-4">
+              <label for="description" class="form-label fw-semibold">
+                <i class="bi bi-card-text me-1"></i>Описание номера
+              </label>
+              <textarea class="form-control" id="description" name="description" rows="4"
+                        placeholder="Например: Просторный двухместный номер с видом на море..." required></textarea>
+              <div class="form-text">Краткое, но информативное описание.</div>
+            </div>
+
+            <!-- Цена -->
+            <div class="mb-4">
+              <label for="price" class="form-label fw-semibold">
+                <i class="bi bi-cash me-1"></i>Цена за ночь (₽)
+              </label>
+              <input type="number" step="0.01" min="0" class="form-control form-control-lg"
+                     id="price" name="price" placeholder="5000.00" required>
+            </div>
+
+            <!-- Фотография -->
+            <div class="mb-4">
+              <label for="photo" class="form-label fw-semibold">
+                <i class="bi bi-image me-1"></i>Фотография номера
+              </label>
+              <input type="file" class="form-control" id="photo" name="photo" accept="image/*" required>
+              <div class="form-text">Рекомендуемое разрешение: 800x600px. Максимальный размер 5MB.</div>
+            </div>
+
+            <!-- Кнопки -->
+            <div class="d-flex gap-2 justify-content-end">
+              <a th:href="@{/admin/rooms}" class="btn btn-light px-4">Отмена</a>
+              <button type="submit" class="btn btn-primary px-4">
+                <i class="bi bi-check-lg me-2"></i>Сохранить номер
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
