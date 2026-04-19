@@ -37,7 +37,7 @@ public class BookingRequest {
     private LocalDate desiredDate;
 
     @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal fixedPrice; // цена на момент запроса
+    private BigDecimal fixedPrice;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -49,17 +49,39 @@ public class BookingRequest {
     @OneToOne(mappedBy = "request", cascade = CascadeType.ALL)
     private Booking booking;
 
+    // Новое поле для отслеживания просмотра клиентом
+    @Column(nullable = false)
+    private boolean viewedByClient = false;
+
+    @Column(nullable = false)
+    private boolean viewedByAdmin = false; // для админа: новые оплаченные/отменённые
+
     public enum RequestStatus {
         PENDING, APPROVED, REJECTED, PAID
     }
 
-    // Вспомогательные методы
     public void approve() {
         this.status = RequestStatus.APPROVED;
+        this.viewedByClient = false; // сбрасываем, чтобы клиент получил уведомление
+    }
+
+    public void cancelByClient() {
+        this.status = RequestStatus.REJECTED;
+        this.rejectionReason = "Отменено клиентом";
+        this.viewedByClient = true; // клиент уже видел, что отменил
     }
 
     public void reject(String reason) {
         this.status = RequestStatus.REJECTED;
         this.rejectionReason = reason;
+        this.viewedByClient = false;
+    }
+
+    public void markAsViewedByClient() {
+        this.viewedByClient = true;
+    }
+
+    public void markAsViewedByAdmin() {
+        this.viewedByAdmin = true;
     }
 }

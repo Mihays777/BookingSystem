@@ -96,6 +96,8 @@ public class AdminController {
         List<BookingRequest> requests = bookingService.getRequestsByStatus(status);
         model.addAttribute("requests", requests);
         model.addAttribute("currentStatus", status);
+        // Сбрасываем флаги ПОСЛЕ загрузки, чтобы в текущем отображении они остались false
+        bookingService.markAllAsViewedByAdmin();
         return "admin/requests";
     }
 

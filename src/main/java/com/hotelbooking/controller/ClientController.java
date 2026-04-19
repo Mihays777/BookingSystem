@@ -65,6 +65,8 @@ public class ClientController {
         User user = securityUtils.getCurrentUser();
         List<BookingRequest> requests = bookingService.getClientRequests(user.getId());
         model.addAttribute("requests", requests);
+        // Сбрасываем флаги ПОСЛЕ того, как данные добавлены в модель
+        bookingService.markAllAsViewedByClient(user);
         return "client/requests";
     }
 
@@ -103,6 +105,18 @@ public class ClientController {
             }
             bookingService.confirmPayment(booking.getId(), user.getId());
             redirectAttributes.addFlashAttribute("success", "Оплата прошла успешно!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/rooms/requests";
+    }
+
+    @PostMapping("/requests/{requestId}/cancel")
+    public String cancelRequest(@PathVariable Long requestId, RedirectAttributes redirectAttributes) {
+        User user = securityUtils.getCurrentUser();
+        try {
+            bookingService.cancelRequestByClient(requestId, user.getId());
+            redirectAttributes.addFlashAttribute("success", "Заявка отменена");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }

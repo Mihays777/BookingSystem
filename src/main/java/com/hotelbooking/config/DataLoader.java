@@ -72,6 +72,27 @@ public class DataLoader implements CommandLineRunner {
             room3.setActive(true);
             roomRepository.save(room3);
 
+            Room room4 = new Room();
+            room4.setDescription("Семейный двухкомнатный номер с детской зоной. Две кровати, игровой уголок, ванна.");
+            room4.setPrice(new BigDecimal("7800.00"));
+            room4.setPhotoPath("/uploads/rooms/default-room.jpg");
+            room4.setActive(true);
+            roomRepository.save(room4);
+
+            Room room5 = new Room();
+            room5.setDescription("Эконом-номер для одного гостя. Душ, телевизор, бесплатный Wi‑Fi.");
+            room5.setPrice(new BigDecimal("2500.00"));
+            room5.setPhotoPath("/uploads/rooms/default-room.jpg");
+            room5.setActive(true);
+            roomRepository.save(room5);
+
+            Room room6 = new Room();
+            room6.setDescription("Представительский люкс с гостиной и спальней, вид на парк, кофе-машина, халаты.");
+            room6.setPrice(new BigDecimal("15000.00"));
+            room6.setPhotoPath("/uploads/rooms/default-room.jpg");
+            room6.setActive(true);
+            roomRepository.save(room6);
+
             System.out.println("Demo rooms created with default images.");
         }
     }

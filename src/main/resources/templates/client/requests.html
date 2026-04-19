@@ -20,11 +20,11 @@
     </a>
   </div>
 
-  <div class="table-responsive" th:if="${!requests.empty}" style="text-align: center;">
-    <table class="table">
+  <div class="table-responsive" th:if="${!requests.empty}">
+    <table class="table text-center">
       <thead>
       <tr>
-        <th style="text-align: left;">Номер</th>
+        <th class="left">Номер</th>
         <th>Дата заезда</th>
         <th>Цена (зафикс.)</th>
         <th>Статус</th>
@@ -33,8 +33,9 @@
       </tr>
       </thead>
       <tbody>
-      <tr th:each="req : ${requests}">
-        <td data-label="Номер" style="text-align: left;">
+      <tr th:each="req : ${requests}"
+          th:class="${(req.status.name() == 'APPROVED' or req.status.name() == 'REJECTED') and !req.viewedByClient} ? 'unread-row' : ''">
+        <td class="left" data-label="Номер">
           <span class="fw-bold">№<span th:text="${req.room.id}"></span></span>
           <br><small class="text-muted" th:text="${req.room.description}"></small>
         </td>
@@ -48,17 +49,34 @@
         </td>
         <td data-label="Причина отказа" th:text="${req.rejectionReason} ?: '—'"></td>
         <td data-label="Действия">
-          <a th:if="${req.status.name() == 'APPROVED'}"
-             th:href="@{/rooms/requests/{id}/pay(id=${req.id})}"
-             class="btn btn-sm btn-success rounded-pill px-4">
-            <i class="bi bi-credit-card me-1"></i>Оплатить
-          </a>
-          <span th:if="${req.status.name() == 'PAID'}" class="badge bg-success py-2 px-3">
-                            <i class="bi bi-check-lg me-1"></i>Оплачено
-                        </span>
-          <span th:if="${req.status.name() == 'PENDING'}" class="text-muted small">
-                            <i class="bi bi-hourglass-split me-1"></i>Ожидание
-                        </span>
+          <div class="d-flex flex-wrap gap-1 justify-content-center">
+            <!-- Кнопка оплаты для APPROVED -->
+            <a th:if="${req.status.name() == 'APPROVED'}"
+               th:href="@{/rooms/requests/{id}/pay(id=${req.id})}"
+               class="btn btn-sm btn-success rounded-pill px-3">
+              <i class="bi bi-credit-card me-1"></i>Оплатить
+            </a>
+            <!-- Кнопка отмены для PENDING и APPROVED -->
+            <form th:if="${req.status.name() == 'PENDING' or req.status.name() == 'APPROVED'}"
+                  th:action="@{/rooms/requests/{id}/cancel(id=${req.id})}" method="post"
+                  onsubmit="return confirm('Вы уверены, что хотите отменить заявку?');">
+              <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">
+                <i class="bi bi-x-circle me-1"></i>Отменить
+              </button>
+            </form>
+            <!-- Статус оплачено -->
+            <span th:if="${req.status.name() == 'PAID'}" class="badge bg-success py-2 px-3">
+            <i class="bi bi-check-lg me-1"></i>Оплачено
+        </span>
+            <!-- Статус ожидание -->
+            <span th:if="${req.status.name() == 'PENDING' and req.status.name() != 'APPROVED'}" class="text-muted small">
+            <i class="bi bi-hourglass-split me-1"></i>Ожидание
+        </span>
+            <!-- Для REJECTED показываем причину -->
+            <span th:if="${req.status.name() == 'REJECTED'}" class="text-danger small">
+            <i class="bi bi-exclamation-circle me-1"></i><span th:text="${req.rejectionReason}"></span>
+        </span>
+          </div>
         </td>
       </tr>
       </tbody>

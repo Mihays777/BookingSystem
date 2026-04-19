@@ -14,102 +14,98 @@
         <span class="badge bg-primary py-2 px-3" th:text="${requests.size()} + ' запросов'"></span>
     </div>
 
-    <!-- Фильтр по статусам -->
+    <!-- Фильтры -->
     <div class="mb-3 d-flex gap-2 flex-wrap">
-        <a th:href="@{/admin/requests}"
-           th:class="'btn btn-sm rounded-pill ' + (${currentStatus == null} ? 'btn-secondary' : 'btn-outline-secondary')">Все</a>
-        <a th:href="@{/admin/requests(status='PENDING')}"
-           th:class="'btn btn-sm rounded-pill ' + (${currentStatus == 'PENDING'} ? 'btn-warning' : 'btn-outline-warning')">Ожидают</a>
-        <a th:href="@{/admin/requests(status='APPROVED')}"
-           th:class="'btn btn-sm rounded-pill ' + (${currentStatus == 'APPROVED'} ? 'btn-info' : 'btn-outline-info')">Одобренные</a>
-        <a th:href="@{/admin/requests(status='PAID')}"
-           th:class="'btn btn-sm rounded-pill ' + (${currentStatus == 'PAID'} ? 'btn-success' : 'btn-outline-success')">Оплаченные</a>
-        <a th:href="@{/admin/requests(status='REJECTED')}"
-           th:class="'btn btn-sm rounded-pill ' + (${currentStatus == 'REJECTED'} ? 'btn-danger' : 'btn-outline-danger')">Отклонённые</a>
+        <a th:href="@{/admin/requests}" th:class="'btn btn-sm rounded-pill ' + (${currentStatus == null} ? 'btn-secondary' : 'btn-outline-secondary')">Все</a>
+        <a th:href="@{/admin/requests(status='PENDING')}" th:class="'btn btn-sm rounded-pill ' + (${currentStatus == 'PENDING'} ? 'btn-warning' : 'btn-outline-warning')">Ожидают</a>
+        <a th:href="@{/admin/requests(status='APPROVED')}" th:class="'btn btn-sm rounded-pill ' + (${currentStatus == 'APPROVED'} ? 'btn-info' : 'btn-outline-info')">Одобренные</a>
+        <a th:href="@{/admin/requests(status='PAID')}" th:class="'btn btn-sm rounded-pill ' + (${currentStatus == 'PAID'} ? 'btn-success' : 'btn-outline-success')">Оплаченные</a>
+        <a th:href="@{/admin/requests(status='REJECTED')}" th:class="'btn btn-sm rounded-pill ' + (${currentStatus == 'REJECTED'} ? 'btn-danger' : 'btn-outline-danger')">Отклонённые</a>
     </div>
 
-    <div class="card border-0 shadow-sm" style="text-align: center;">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table mb-0">
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Клиент</th>
-                        <th style="text-align: left;">Номер</th>
-                        <th>Дата заезда</th>
-                        <th>Цена</th>
-                        <th>Статус</th>
-                        <th>Действия</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="req : ${requests}">
-                        <td data-label="ID" th:text="${req.id}"></td>
-                        <td data-label="Клиент">
-                            <span class="fw-semibold" th:text="${req.client.login}"></span>
-                        </td>
-                        <td data-label="Номер" style="text-align: left;">
-                            №<span th:text="${req.room.id}"></span>
-                            <br><small class="text-muted" th:text="${req.room.description}"></small>
-                        </td>
-                        <td data-label="Дата заезда" th:text="${#temporals.format(req.desiredDate, 'dd.MM.yyyy')}"></td>
-                        <td data-label="Цена" class="fw-semibold" th:text="${req.fixedPrice} + '⠀₽'"></td>
-                        <td data-label="Статус">
+    <div class="table-responsive" th:if="${!requests.empty}">
+        <table class="table text-center">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Клиент</th>
+                <th class="left">Номер</th>
+                <th>Дата заезда</th>
+                <th>Цена</th>
+                <th>Статус</th>
+                <th>Действия</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="req : ${requests}"
+                th:class="${(req.status.name() == 'PAID' or req.status.name() == 'REJECTED') and !req.viewedByAdmin} ? 'unread-row' : ''">
+                <td data-label="ID" th:text="${req.id}"></td>
+                <td data-label="Клиент">
+                    <span class="fw-semibold" th:text="${req.client.login}"></span>
+                </td>
+                <td class="left" data-label="Номер">
+                    №<span th:text="${req.room.id}"></span>
+                    <br><small class="text-muted" th:text="${req.room.description}"></small>
+                </td>
+                <td data-label="Дата заезда" th:text="${#temporals.format(req.desiredDate, 'dd.MM.yyyy')}"></td>
+                <td data-label="Цена" class="fw-semibold" th:text="${req.fixedPrice} + '⠀₽'"></td>
+                <td data-label="Статус">
                             <span th:class="'badge ' + (${req.status.name() == 'PENDING'} ? 'bg-warning' :
                                                          (${req.status.name() == 'APPROVED'} ? 'bg-info' :
                                                          (${req.status.name() == 'PAID'} ? 'bg-success' : 'bg-danger')))"
                                   th:text="${req.status}"></span>
-                        </td>
-                        <td data-label="Действия">
-                            <div th:if="${req.status.name() == 'PENDING'}">
-                                <form th:action="@{/admin/requests/{id}/approve(id=${req.id})}" method="post" class="d-inline">
-                                    <button type="submit" class="btn btn-sm btn-success me-1 rounded-pill">
-                                        <i class="bi bi-check-lg"></i> Одобрить
-                                    </button>
-                                </form>
-                                <button type="button" class="btn btn-sm btn-outline-danger rounded-pill"
-                                        data-bs-toggle="modal" th:attr="data-bs-target='#rejectModal' + ${req.id}">
-                                    <i class="bi bi-x-lg"></i> Отклонить
-                                </button>
-                                <!-- Модальное окно для причины отказа -->
-                                <div class="modal fade" th:id="'rejectModal' + ${req.id}" tabindex="-1" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content border-0 shadow-lg">
-                                            <form th:action="@{/admin/requests/{id}/reject(id=${req.id})}" method="post">
-                                                <div class="modal-header border-0">
-                                                    <h5 class="modal-title fw-bold">Укажите причину отказа</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <textarea class="form-control" name="reason" rows="4" required
-                                                              placeholder="Номер недоступен, неверные даты и т.п."></textarea>
-                                                </div>
-                                                <div class="modal-footer border-0">
-                                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Отмена</button>
-                                                    <button type="submit" class="btn btn-danger">Отклонить запрос</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div th:if="${req.status.name() != 'PENDING'}">
-                                <span th:if="${req.rejectionReason}" class="text-danger small">
+                </td>
+                <td data-label="Действия">
+                    <div class="d-flex flex-wrap gap-1 justify-content-center">
+                        <form th:if="${req.status.name() == 'PENDING'}" th:action="@{/admin/requests/{id}/approve(id=${req.id})}" method="post">
+                            <button type="submit" class="btn btn-sm btn-success rounded-pill px-3">
+                                <i class="bi bi-check-lg"></i> Одобрить
+                            </button>
+                        </form>
+                        <button th:if="${req.status.name() == 'PENDING'}" type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3"
+                                data-bs-toggle="modal" th:attr="data-bs-target='#rejectModal' + ${req.id}">
+                            <i class="bi bi-x-lg"></i> Отклонить
+                        </button>
+                        <span th:if="${req.status.name() == 'APPROVED'}" class="text-muted small">
+                                    <i class="bi bi-hourglass-split me-1"></i>Ожидает оплаты
+                                </span>
+                        <span th:if="${req.status.name() == 'PAID'}" class="badge bg-success py-2 px-3">
+                                    <i class="bi bi-check-lg me-1"></i>Оплачено
+                                </span>
+                        <span th:if="${req.status.name() == 'REJECTED'}" class="text-danger small">
                                     <i class="bi bi-exclamation-circle me-1"></i><span th:text="${req.rejectionReason}"></span>
                                 </span>
-                                <span th:unless="${req.rejectionReason}" class="text-muted small">—</span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr th:if="${requests.empty}">
-                        <td colspan="7" class="text-center py-5 text-muted">
-                            <i class="bi bi-inbox fs-1"></i>
-                            <p class="mt-2">Нет запросов на бронирование.</p>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:if="${requests.empty}" class="text-center py-5 text-muted">
+        <i class="bi bi-inbox fs-1"></i>
+        <p class="mt-2">Нет запросов на бронирование.</p>
+    </div>
+
+    <!-- Модальные окна -->
+    <div th:each="req : ${requests}" th:if="${req.status.name() == 'PENDING'}">
+        <div class="modal" th:id="'rejectModal' + ${req.id}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content border-0 shadow-lg">
+                    <form th:action="@{/admin/requests/{id}/reject(id=${req.id})}" method="post">
+                        <div class="modal-header border-0">
+                            <h5 class="modal-title fw-bold">Укажите причину отказа</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <textarea class="form-control" name="reason" rows="4" required
+                                      placeholder="Номер недоступен, неверные даты и т.п."></textarea>
+                        </div>
+                        <div class="modal-footer border-0">
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Отмена</button>
+                            <button type="submit" class="btn btn-danger">Отклонить запрос</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

@@ -41,8 +41,11 @@
                     </a>
                 </li>
                 <li class="nav-item" sec:authorize="hasAuthority('CLIENT')">
-                    <a class="nav-link px-3" th:href="@{/rooms/requests}">
+                    <a class="nav-link px-3 position-relative" th:href="@{/rooms/requests}">
                         <i class="bi bi-calendar-check me-1"></i> Мои заявки
+                        <span th:if="${unreadClientNotifications > 0}"
+                              class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger badge-notification"
+                              th:text="${unreadClientNotifications}"></span>
                     </a>
                 </li>
                 <li class="nav-item" sec:authorize="hasAuthority('ADMIN')">
@@ -51,8 +54,11 @@
                     </a>
                 </li>
                 <li class="nav-item" sec:authorize="hasAuthority('ADMIN')">
-                    <a class="nav-link px-3" th:href="@{/admin/requests}">
+                    <a class="nav-link px-3 position-relative" th:href="@{/admin/requests}">
                         <i class="bi bi-envelope-paper me-1"></i> Запросы на бронь
+                        <span th:if="${pendingAdminRequests + unreadAdminNotifications > 0}"
+                              class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger badge-notification"
+                              th:text="${pendingAdminRequests + unreadAdminNotifications}"></span>
                     </a>
                 </li>
             </ul>

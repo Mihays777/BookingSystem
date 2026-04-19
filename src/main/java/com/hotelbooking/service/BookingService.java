@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -81,6 +82,7 @@ public class BookingService {
         }
 
         request.approve();
+        request.setViewedByClient(false);
 
         // Создаем бронирование
         Booking booking = new Booking();
@@ -117,6 +119,8 @@ public class BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
 
+        BookingRequest request = booking.getRequest();
+
         // Проверяем, что бронирование принадлежит клиенту
         if (!booking.getRequest().getClient().getId().equals(clientId)) {
             throw new RuntimeException("Access denied");
@@ -134,9 +138,11 @@ public class BookingService {
 
         booking.confirmPayment();
         bookingRepository.save(booking);
-        // статус запроса обновится в confirmPayment() через каскад?
-        // В Booking.confirmPayment() мы меняем статус запроса на PAID
-        requestRepository.save(booking.getRequest());
+
+        // После оплаты отмечаем заявку как просмотренную
+        request.setViewedByClient(true);
+        requestRepository.save(request);
+        request.setViewedByAdmin(false);
     }
 
     /**
@@ -149,6 +155,7 @@ public class BookingService {
         request.setStatus(BookingRequest.RequestStatus.REJECTED);
         request.setRejectionReason("Истек срок оплаты (24 часа)");
         requestRepository.save(request);
+        request.setViewedByAdmin(false);
         // Удаляем бронирование (или можно оставить с пометкой, но по логике оно больше не нужно)
         bookingRepository.delete(booking);
     }
@@ -182,5 +189,55 @@ public class BookingService {
         } catch (IllegalArgumentException e) {
             return requestRepository.findAllByOrderByRequestDateDesc();
         }
+    }
+
+    public long getPendingRequestsCount() {
+        return requestRepository.countByStatus(BookingRequest.RequestStatus.PENDING);
+    }
+
+    public long getUnreadNotificationsCount(User client) {
+        return requestRepository.countByClientAndStatusInAndViewedByClientFalse(
+                client,
+                Arrays.asList(BookingRequest.RequestStatus.APPROVED, BookingRequest.RequestStatus.REJECTED)
+        );
+    }
+
+    // Метод для отметки просмотра всех непрочитанных заявок клиента при входе на страницу "Мои заявки"
+    @Transactional
+    public void markAllAsViewedByClient(User client) {
+        requestRepository.markAsViewedByClient(client, List.of(BookingRequest.RequestStatus.REJECTED));
+    }
+
+    @Transactional
+    public void markAllAsViewedByAdmin() {
+        requestRepository.markAsViewedByAdmin(List.of(BookingRequest.RequestStatus.PAID, BookingRequest.RequestStatus.REJECTED));
+    }
+
+    @Transactional
+    public void cancelRequestByClient(Long requestId, Long clientId) {
+        BookingRequest request = requestRepository.findById(requestId)
+                .orElseThrow(() -> new RuntimeException("Запрос не найден"));
+        if (!request.getClient().getId().equals(clientId)) {
+            throw new RuntimeException("Нет доступа");
+        }
+        // Отменять можно только PENDING или APPROVED
+        if (request.getStatus() == BookingRequest.RequestStatus.PENDING || request.getStatus() == BookingRequest.RequestStatus.APPROVED) {
+            // Если есть связанное бронирование (APPROVED) – удалим его
+            if (request.getBooking() != null) {
+                bookingRepository.delete(request.getBooking());
+                request.setBooking(null);
+            }
+            request.cancelByClient();
+            request.setViewedByAdmin(false);
+            requestRepository.save(request);
+        } else {
+            throw new RuntimeException("Нельзя отменить заявку в статусе " + request.getStatus());
+        }
+    }
+
+    public long getUnreadAdminNotificationsCount() {
+        return requestRepository.countByStatusInAndViewedByAdminFalse(
+                List.of(BookingRequest.RequestStatus.PAID, BookingRequest.RequestStatus.REJECTED)
+        );
     }
 }
