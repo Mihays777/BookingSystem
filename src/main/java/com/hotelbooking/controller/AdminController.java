@@ -47,10 +47,13 @@ public class AdminController {
     @PostMapping("/rooms")
     public String createRoom(@RequestParam String description,
                              @RequestParam BigDecimal price,
+                             @RequestParam Integer capacity,
+                             @RequestParam Room.RoomType roomType,
+                             @RequestParam String roomNumber,
                              @RequestParam("photo") MultipartFile photo,
                              RedirectAttributes redirectAttributes) {
         try {
-            roomService.createRoom(description, price, photo);
+            roomService.createRoom(description, price, capacity, roomType, roomNumber, photo);
             redirectAttributes.addFlashAttribute("success", "Номер добавлен");
         } catch (IOException e) {
             redirectAttributes.addFlashAttribute("error", "Ошибка загрузки фото");
@@ -69,13 +72,15 @@ public class AdminController {
     public String updateRoom(@PathVariable Long id,
                              @RequestParam String description,
                              @RequestParam BigDecimal price,
+                             @RequestParam Integer capacity,
+                             @RequestParam Room.RoomType roomType,
+                             @RequestParam String roomNumber,
                              @RequestParam(required = false) Boolean isActive,
                              @RequestParam(value = "photo", required = false) MultipartFile photo,
                              RedirectAttributes redirectAttributes) {
         try {
-            // Если чекбокс не отмечен, параметр isActive = null -> значит false
             boolean activeStatus = isActive != null ? isActive : false;
-            roomService.updateRoom(id, description, price, activeStatus, photo);
+            roomService.updateRoom(id, description, price, capacity, roomType, roomNumber, activeStatus, photo);
             redirectAttributes.addFlashAttribute("success", "Номер обновлён");
         } catch (IOException e) {
             redirectAttributes.addFlashAttribute("error", "Ошибка загрузки фото");

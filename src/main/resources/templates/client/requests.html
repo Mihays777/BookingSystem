@@ -57,25 +57,40 @@
               <i class="bi bi-credit-card me-1"></i>Оплатить
             </a>
             <!-- Кнопка отмены для PENDING и APPROVED -->
-            <form th:if="${req.status.name() == 'PENDING' or req.status.name() == 'APPROVED'}"
-                  th:action="@{/rooms/requests/{id}/cancel(id=${req.id})}" method="post"
-                  onsubmit="return confirm('Вы уверены, что хотите отменить заявку?');">
-              <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">
-                <i class="bi bi-x-circle me-1"></i>Отменить
-              </button>
-            </form>
+            <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3"
+                    data-bs-toggle="modal" th:attr="data-bs-target='#cancelModal' + ${req.id}" th:if="${req.status.name() == 'PENDING' or req.status.name() == 'APPROVED'}">
+              <i class="bi bi-x-circle me-1"></i>Отменить
+            </button>
+
+            <!-- Модальное окно -->
+            <div class="modal fade" th:id="'cancelModal' + ${req.id}" tabindex="-1">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Подтверждение отмены</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
+                  <div class="modal-body">
+                    Вы действительно хотите отменить заявку на номер №<span th:text="${req.room.id}"></span>?
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
+                    <form th:action="@{/rooms/requests/{id}/cancel(id=${req.id})}" method="post">
+                      <button type="submit" class="btn btn-danger">Да, отменить</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
             <!-- Статус оплачено -->
             <span th:if="${req.status.name() == 'PAID'}" class="badge bg-success py-2 px-3">
-            <i class="bi bi-check-lg me-1"></i>Оплачено
-        </span>
+            <i class="bi bi-check-lg me-1"></i>Оплачено</span>
             <!-- Статус ожидание -->
             <span th:if="${req.status.name() == 'PENDING' and req.status.name() != 'APPROVED'}" class="text-muted small">
-            <i class="bi bi-hourglass-split me-1"></i>Ожидание
-        </span>
-            <!-- Для REJECTED показываем причину -->
+            <i class="bi bi-hourglass-split me-1"></i>Ожидание</span>
+            <!-- Статус отказано -->
             <span th:if="${req.status.name() == 'REJECTED'}" class="text-danger small">
-            <i class="bi bi-exclamation-circle me-1"></i><span th:text="${req.rejectionReason}"></span>
-        </span>
+            <i class="bi bi-exclamation-circle me-1"></i>Отклененно</span>
           </div>
         </td>
       </tr>

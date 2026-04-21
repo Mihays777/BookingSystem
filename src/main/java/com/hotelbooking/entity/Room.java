@@ -21,7 +21,7 @@ public class Room {
     private Long id;
 
     @Column(nullable = false)
-    private String photoPath;  // путь к файлу изображения
+    private String photoPath;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
@@ -32,10 +32,24 @@ public class Room {
     @Column(nullable = false)
     private boolean isActive = true;
 
+    // Новые поля
+    @Column(nullable = false)
+    private Integer capacity = 1; // количество мест
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private RoomType roomType = RoomType.STANDARD;
+
+    @Column(unique = true)
+    private String roomNumber;
+
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private List<BookingRequest> requests = new ArrayList<>();
 
-    // Методы изменения цены и активности
+    public enum RoomType {
+        STANDARD, SUITE, FAMILY, LUXURY
+    }
+
     public void changePrice(BigDecimal newPrice) {
         this.price = newPrice;
     }

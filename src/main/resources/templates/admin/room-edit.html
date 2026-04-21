@@ -18,6 +18,31 @@
         </div>
         <div class="card-body">
           <form th:action="@{/admin/rooms/{id}(id=${room.id})}" method="post" enctype="multipart/form-data">
+            <!-- Номер комнаты -->
+            <div class="mb-3">
+              <label for="roomNumber" class="form-label">Номер комнаты</label>
+              <input type="text" class="form-control" id="roomNumber" name="roomNumber" th:value="${room.roomNumber}" required>
+            </div>
+
+            <div class="row">
+              <!-- Количество мест -->
+              <div class="col-md-6 mb-3">
+                <label for="capacity" class="form-label">Количество мест</label>
+                <input type="number" min="1" class="form-control" id="capacity" name="capacity" th:value="${room.capacity}" required>
+              </div>
+
+              <!-- Тип номера -->
+              <div class="col-md-6 mb-3">
+                <label for="roomType" class="form-label">Тип номера</label>
+                <select class="form-select" id="roomType" name="roomType" required>
+                  <option value="STANDARD" th:selected="${room.roomType.name() == 'STANDARD'}">Стандарт</option>
+                  <option value="SUITE" th:selected="${room.roomType.name() == 'SUITE'}">Сьют</option>
+                  <option value="FAMILY" th:selected="${room.roomType.name() == 'FAMILY'}">Семейный</option>
+                  <option value="LUXURY" th:selected="${room.roomType.name() == 'LUXURY'}">Люкс</option>
+                </select>
+              </div>
+            </div>
+
             <!-- Описание -->
             <div class="mb-4">
               <label for="description" class="form-label fw-semibold">Описание</label>

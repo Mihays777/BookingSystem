@@ -20,7 +20,7 @@ import java.util.UUID;
 public class RoomService {
 
     private final RoomRepository roomRepository;
-    private final String uploadDir = "./uploads/rooms/"; // можно вынести в настройки
+    private final String uploadDir = "./uploads/rooms/";
 
     public List<Room> getAllRooms() {
         return roomRepository.findAllByOrderByIdAsc();
@@ -35,13 +35,16 @@ public class RoomService {
     }
 
     @Transactional
-    public Room createRoom(String description, BigDecimal price, MultipartFile photo) throws IOException {
+    public Room createRoom(String description, BigDecimal price, Integer capacity, Room.RoomType roomType, String roomNumber,
+                           MultipartFile photo) throws IOException {
         Room room = new Room();
         room.setDescription(description);
         room.setPrice(price);
+        room.setCapacity(capacity);
+        room.setRoomType(roomType);
+        room.setRoomNumber(roomNumber);
         room.setActive(true);
 
-        // Сохранение фото
         if (photo != null && !photo.isEmpty()) {
             String fileName = UUID.randomUUID() + "_" + photo.getOriginalFilename();
             Path uploadPath = Paths.get(uploadDir);
@@ -52,24 +55,27 @@ public class RoomService {
             Files.copy(photo.getInputStream(), filePath);
             room.setPhotoPath("/uploads/rooms/" + fileName);
         } else {
-            room.setPhotoPath("/images/default-room.jpg"); // заглушка
+            room.setPhotoPath("/images/default-room.jpg");
         }
 
         return roomRepository.save(room);
     }
 
     @Transactional
-    public Room updateRoom(Long id, String description, BigDecimal price, Boolean isActive, MultipartFile photo) throws IOException {
+    public Room updateRoom(Long id, String description, BigDecimal price, Integer capacity, Room.RoomType roomType,
+                           String roomNumber, Boolean isActive, MultipartFile photo) throws IOException {
         Room room = getRoomById(id);
         room.setDescription(description);
         room.setPrice(price);
+        room.setCapacity(capacity);
+        room.setRoomType(roomType);
+        room.setRoomNumber(roomNumber);
         if (isActive != null) {
             room.setActive(isActive);
         }
         if (photo != null && !photo.isEmpty()) {
-            // Удалить старый файл, если не дефолтный
             String oldPhotoPath = room.getPhotoPath();
-            if (oldPhotoPath != null && oldPhotoPath.startsWith("/uploads/rooms/")) {
+            if (oldPhotoPath != null && !oldPhotoPath.equals("/images/default-room.jpg") && oldPhotoPath.startsWith("/uploads/rooms/")) {
                 Path oldFilePath = Paths.get("." + oldPhotoPath);
                 Files.deleteIfExists(oldFilePath);
             }
@@ -88,12 +94,14 @@ public class RoomService {
     @Transactional
     public void deleteRoom(Long id) {
         Room room = getRoomById(id);
-        // Удаляем фото, если не дефолтное
         String photoPath = room.getPhotoPath();
-        if (photoPath != null && photoPath.startsWith("/uploads/rooms/")) {
-            try {
-                Files.deleteIfExists(Paths.get("." + photoPath));
-            } catch (IOException ignored) {}
+        if (photoPath != null && !photoPath.equals("/images/default-room.jpg") && photoPath.startsWith("/uploads/rooms/")) {
+            long count = roomRepository.countByPhotoPath(photoPath);
+            if (count <= 1) {
+                try {
+                    Files.deleteIfExists(Paths.get("." + photoPath));
+                } catch (IOException ignored) {}
+            }
         }
         roomRepository.delete(room);
     }

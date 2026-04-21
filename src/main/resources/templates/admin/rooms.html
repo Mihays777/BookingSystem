@@ -79,6 +79,9 @@
             <tr>
                 <th>ID</th>
                 <th>Фото</th>
+                <th>№</th>
+                <th>Тип</th>
+                <th>Мест</th>
                 <th style="text-align: left;">Описание</th>
                 <th>Цена</th>
                 <th>Статус</th>
@@ -91,14 +94,17 @@
                 <td>
                     <img th:src="${room.photoPath}" class="rounded-3" style="width: 80px; height: 60px; object-fit: cover;">
                 </td>
+                <td th:text="${room.roomNumber}"></td>
+                <td th:text="${room.roomType}"></td>
+                <td th:text="${room.capacity}"></td>
                 <td style="text-align: left;">
                     <div class="fw-semibold">Номер №<span th:text="${room.id}"></span></div>
                     <small class="text-muted" th:text="${room.description}"></small>
                 </td>
                 <td class="fw-bold text-primary" th:text="${room.price} + '⠀₽'"></td>
                 <td>
-                                <span th:class="'badge ' + (${room.active} ? 'bg-success' : 'bg-secondary')"
-                                      th:text="${room.active} ? 'Активен' : 'Неактивен'"></span>
+                    <span th:class="'badge ' + (${room.active} ? 'bg-success' : 'bg-secondary')"
+                          th:text="${room.active} ? 'Активен' : 'Неактивен'"></span>
                 </td>
                 <td>
                     <div class="btn-group btn-group-sm" role="group">
@@ -117,7 +123,7 @@
                 </td>
             </tr>
             <tr th:if="${rooms.empty}">
-                <td colspan="6" class="text-center py-5 text-muted">
+                <td colspan="9" class="text-center py-5 text-muted">
                     <i class="bi bi-building-add fs-1"></i>
                     <p class="mt-2">Нет ни одного номера. Добавьте первый номер.</p>
                     <a th:href="@{/admin/rooms/new}" class="btn btn-sm btn-primary">Добавить номер</a>
