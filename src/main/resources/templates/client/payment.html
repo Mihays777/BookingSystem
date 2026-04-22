@@ -3,7 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-  <title>Подтверждение оплаты — Гостиница TOP</title>
+  <title>Подтверждение оплаты — Гостиница</title>
 </head>
 <body>
 <div layout:fragment="content">
@@ -20,7 +20,7 @@
             <h5 class="fw-bold mb-3">Детали бронирования</h5>
             <div class="d-flex justify-content-between mb-2">
               <span>Номер:</span>
-              <strong>№<span th:text="${request.room.id}"></span></strong>
+              <strong><span th:text="${request.room.roomNumber}"></span></strong>
             </div>
             <div class="d-flex justify-content-between mb-2">
               <span>Дата заезда:</span>

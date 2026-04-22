@@ -83,6 +83,7 @@ public class BookingService {
 
         request.approve();
         request.setViewedByClient(false);
+        request.setViewedByAdmin(true);
 
         // Создаем бронирование
         Booking booking = new Booking();
@@ -108,6 +109,7 @@ public class BookingService {
         }
 
         request.reject(reason);
+        request.setViewedByAdmin(true);
         requestRepository.save(request);
     }
 
@@ -210,7 +212,7 @@ public class BookingService {
 
     @Transactional
     public void markAllAsViewedByAdmin() {
-        requestRepository.markAsViewedByAdmin(List.of(BookingRequest.RequestStatus.PAID, BookingRequest.RequestStatus.REJECTED));
+        requestRepository.markAsViewedByAdmin(List.of(BookingRequest.RequestStatus.PAID, BookingRequest.RequestStatus.REJECTED, BookingRequest.RequestStatus.PENDING));
     }
 
     @Transactional

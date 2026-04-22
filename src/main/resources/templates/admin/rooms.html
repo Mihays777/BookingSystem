@@ -74,7 +74,7 @@
 
     <!-- Таблица номеров -->
     <div class="table-responsive mt-3">
-        <table class="table mb-0">
+        <table class="table mb-0 text-center">
             <thead>
             <tr>
                 <th>ID</th>
@@ -82,7 +82,7 @@
                 <th>№</th>
                 <th>Тип</th>
                 <th>Мест</th>
-                <th style="text-align: left;">Описание</th>
+                <th class="left">Описание</th>
                 <th>Цена</th>
                 <th>Статус</th>
                 <th>Действия</th>
@@ -98,7 +98,7 @@
                 <td th:text="${room.roomType}"></td>
                 <td th:text="${room.capacity}"></td>
                 <td style="text-align: left;">
-                    <div class="fw-semibold">Номер №<span th:text="${room.id}"></span></div>
+                    <div class="fw-semibold left">Номер <span th:text="${room.roomNumber}"></span></div>
                     <small class="text-muted" th:text="${room.description}"></small>
                 </td>
                 <td class="fw-bold text-primary" th:text="${room.price} + '⠀₽'"></td>

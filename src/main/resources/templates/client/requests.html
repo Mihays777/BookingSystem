@@ -3,7 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-  <title>Мои заявки — Гостиница TOP</title>
+  <title>Мои заявки — Гостиница</title>
 </head>
 <body>
 <div layout:fragment="content">
@@ -36,7 +36,7 @@
       <tr th:each="req : ${requests}"
           th:class="${(req.status.name() == 'APPROVED' or req.status.name() == 'REJECTED') and !req.viewedByClient} ? 'unread-row' : ''">
         <td class="left" data-label="Номер">
-          <span class="fw-bold">№<span th:text="${req.room.id}"></span></span>
+          <span class="fw-bold"><span th:text="${req.room.roomNumber}"></span></span>
           <br><small class="text-muted" th:text="${req.room.description}"></small>
         </td>
         <td data-label="Дата заезда" th:text="${#temporals.format(req.desiredDate, 'dd.MM.yyyy')}"></td>
@@ -90,7 +90,7 @@
             <i class="bi bi-hourglass-split me-1"></i>Ожидание</span>
             <!-- Статус отказано -->
             <span th:if="${req.status.name() == 'REJECTED'}" class="text-danger small">
-            <i class="bi bi-exclamation-circle me-1"></i>Отклененно</span>
+            <i class="bi bi-exclamation-circle me-1"></i>Отклоненно</span>
           </div>
         </td>
       </tr>

@@ -3,7 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-  <title>Запрос на бронирование — Гостиница TOP</title>
+  <title>Запрос на бронирование — Гостиница</title>
 </head>
 <body>
 <div layout:fragment="content">
@@ -15,8 +15,17 @@
              style="height: 260px; object-fit: cover;">
         <div class="card-body">
           <h3 class="card-title fw-bold">
-            <i class="bi bi-info-circle me-2"></i>Номер №<span th:text="${room.id}"></span>
+            <i class="bi bi-info-circle me-2"></i>Номер <span th:text="${room.roomNumber}"></span>
           </h3>
+          <!-- Бейджи с типом и вместимостью -->
+          <div class="d-flex gap-2 mb-3">
+        <span class="badge bg-light text-dark">
+          <i class="bi bi-people me-1"></i><span th:text="${room.capacity}"></span> мест
+        </span>
+            <span class="badge bg-light text-dark">
+          <i class="bi bi-tag me-1"></i><span th:text="${room.roomType}"></span>
+        </span>
+          </div>
           <p class="card-text text-secondary" th:text="${room.description}"></p>
           <hr class="my-4">
           <div class="d-flex justify-content-between align-items-center">

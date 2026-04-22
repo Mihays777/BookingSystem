@@ -45,7 +45,7 @@
                     <span class="fw-semibold" th:text="${req.client.login}"></span>
                 </td>
                 <td class="left" data-label="Номер">
-                    №<span th:text="${req.room.id}"></span>
+                    <span th:text="${req.room.roomNumber}"></span>
                     <br><small class="text-muted" th:text="${req.room.description}"></small>
                 </td>
                 <td data-label="Дата заезда" th:text="${#temporals.format(req.desiredDate, 'dd.MM.yyyy')}"></td>
