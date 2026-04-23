@@ -57,7 +57,7 @@ public class DataLoader implements CommandLineRunner {
             room1.setCapacity(1);
             room1.setDescription("Уютный одноместный номер с видом на город. В номере: кровать, телевизор, кондиционер, бесплатный Wi-Fi.");
             room1.setPrice(new BigDecimal("3500.00"));
-            room1.setPhotoPath("/uploads/rooms/default-room.jpg");
+            room1.setPhotoPath("/uploads/rooms/Номер101.jpg");
             room1.setActive(true);
             roomRepository.save(room1);
 
@@ -68,7 +68,7 @@ public class DataLoader implements CommandLineRunner {
             room2.setCapacity(2);
             room2.setDescription("Двухместный номер с двумя односпальными кроватями. Ванная комната с душем, телевизор, бесплатный Wi-Fi.");
             room2.setPrice(new BigDecimal("4500.00"));
-            room2.setPhotoPath("/uploads/rooms/default-room.jpg");
+            room2.setPhotoPath("/uploads/rooms/Номер102.jpg");
             room2.setActive(true);
             roomRepository.save(room2);
 
@@ -79,7 +79,7 @@ public class DataLoader implements CommandLineRunner {
             room3.setCapacity(2);
             room3.setDescription("Просторный сюит с большой двуспальной кроватью и зоной отдыха. Ванная комната с ванной, мини-бар, сейф.");
             room3.setPrice(new BigDecimal("7500.00"));
-            room3.setPhotoPath("/uploads/rooms/default-room.jpg");
+            room3.setPhotoPath("/uploads/rooms/Номер201.jpg");
             room3.setActive(true);
             roomRepository.save(room3);
 
@@ -90,7 +90,7 @@ public class DataLoader implements CommandLineRunner {
             room4.setCapacity(4);
             room4.setDescription("Семейный двухкомнатный номер: спальня с двуспальной кроватью и детская с двумя односпальными. Игровой уголок, ванна, холодильник.");
             room4.setPrice(new BigDecimal("9500.00"));
-            room4.setPhotoPath("/uploads/rooms/default-room.jpg");
+            room4.setPhotoPath("/uploads/rooms/Номер301.jpg");
             room4.setActive(true);
             roomRepository.save(room4);
 
@@ -101,7 +101,7 @@ public class DataLoader implements CommandLineRunner {
             room5.setCapacity(2);
             room5.setDescription("Представительский люкс с панорамным видом на парк. Гостиная и спальня, джакузи, кофе-машина, халаты, тапочки.");
             room5.setPrice(new BigDecimal("15000.00"));
-            room5.setPhotoPath("/uploads/rooms/default-room.jpg");
+            room5.setPhotoPath("/uploads/rooms/Номер401.jpg");
             room5.setActive(true);
             roomRepository.save(room5);
 
@@ -112,7 +112,7 @@ public class DataLoader implements CommandLineRunner {
             room6.setCapacity(3);
             room6.setDescription("Президентский люкс: две спальни, гостиная с камином, кухня, вид на город, обслуживание 24/7.");
             room6.setPrice(new BigDecimal("25000.00"));
-            room6.setPhotoPath("/uploads/rooms/default-room.jpg");
+            room6.setPhotoPath("/uploads/rooms/Номер402.jpg");
             room6.setActive(true);
             roomRepository.save(room6);
 
